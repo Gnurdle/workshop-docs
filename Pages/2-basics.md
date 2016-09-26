@@ -27,20 +27,20 @@ In Clojure, these are examples of things that  become atoms when the reader enco
 
 
 | atom             | internal type  | explaination |
-| ------------------    | -------------|    |
-| nil        | nil  | the non-value, e.g. NULL / missing|
+| -------------    | -------------  | -------------|
+| nil              | nil  | the non-value, e.g. NULL / missing |
 | false      | java.lang.boolean |  logical false |
 | true       | java.lang.boolean |  logical true |
-| 0, -42, 105  | java.lang.Long  | integer numbers |
-| 1.1, -1.2e20 | java.lang.double | ieee floating point numbers
-| 42.3M , 1M | java.math.BigDecimal | arbitrary precision numbers
-| 1/3, 22/7 |  clojure.lang.Ratio | numbers that are repreented internally as a ratio 
-| eggs&ham, y+2,  peach, whiskey  | clojure.lang.Symbol | symbols (note the "&" and "+" are not special!)
-| :name, :owner | clojure.lang.Keyword | keywords - special - they are interned
-| \H, \e, \l, \l \o | java.lang.Character | single character constants
-| "apple", "red"    | java.lang.String | string literal |
+| 0, -42, 105  | java.lang.Long  | integer numbers | 
+| 1.1, -1.2e20 | java.lang.double | ieee floating point numbers |
+| 42.3M , 1M | java.math.BigDecimal | arbitrary precision numbers |
+| 1/3, 22/7 |  clojure.lang.Ratio | numbers that are repreented internally as a ratio |
+| eggs&ham, y+2,  peach, whiskey  | clojure.lang.Symbol | symbols (note the "&" and "+" are not special!) |
+| :name, :owner | clojure.lang.Keyword | keywords - special - they are interned |
+| \H, \e, \l, \l \o | java.lang.Character | single character constants |
+| "apple", "red"    | java.lang.String | string literal| 
 
-This should feel pretty natural to anybody that has used any programming language.  There are couple of points that might be surprising:
+This should all feel pretty natural to anybody that has used any programming language.  There are couple of points that might be surprising:
 
    - Characters that you might expect to be "special" are not - aka there are no hard tokens like '=', '+' '&' etc.  In Clojure, these are just part of possible characters in symbols
    
@@ -197,7 +197,7 @@ We have the core  concepts, and we also have all the [documentation](https://clo
 
 Wanting to write a program, but can't get any traction?
 
-We've Been there.  There is a lot of stuff, and it is well organized if you know what you are looking for, but there is seemingly no place to get that first bite, and get started - even if you've been writing imperative code for decades.
+Been there.  There is a lot of stuff, and it is well organized if you know what you are looking for, but there is seemingly no place to get that first bite, and get started - even if you've been writing imperative code for decades.
 
 So this section is going to try to be a whirlwind tour of where you might find (or not find) some of the stuff you might be looking for.
 
@@ -293,6 +293,31 @@ but that hardly does it justice.  If you have some loop in mind that doesn't fit
 
 These are common loop constructs that get re-use through the different behavior of the function applied, so instead of writing out these loops, you just provide the behavior, not the actual loop body.
 
+If none of those exactly fit, then there is yet another option - replace your loop with a recusive function call.  Which is the usual prescription.
+
+But we all know that recursion gets expensive - eats a lot of stack space and whatnot.
+
+This is mitgated by something called tail-call recursion, it is an optimization which recognizes that recursion from the tail of a function can be done without actually having to do the recursion, because there is really no need to preserve the call context to "come back to".
+
+Some languages are able to do this implicity, Clojure does it explicity through the **recur** form which can be applied both to function calls and **loop** forms.
+
+by example:
+
+```Clojure
+
+(defn sum-through [v]
+  (loop [i 0 r 0]
+    (if (<= i v)
+      (recur (inc i) (+ r i))
+      r)))
+
+
+user> (time (sum-through 15000000))
+"Elapsed time: 505.040951 msecs"
+112500007500000
+```
+
+yeah, that didn't happen on the stack.
 
 
 
