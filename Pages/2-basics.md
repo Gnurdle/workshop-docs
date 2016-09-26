@@ -1,9 +1,13 @@
 # Chapter 2: Basics
 
 ### Dive, Dive!
-Often when someone fluent in another programming language encounters Clojure (or Lisp) code, the reaction is akin to staring into an abyss of complexity and confusion.
 
-Lots of parens mixed with familiar and unfamiliar words, no obvious structure, etc.  Whiskey,  Tango, Foxtrot?
+We are working under the assumption that the reader has some programming experience under their belt.  We presume such experience is with a mainstream imperative language.
+
+
+Often when someone fluent in another programming language encounters Clojure (or Lisp) code for the first time, the reaction is akin to staring into an abyss of complexity, confusion and puzzlement.
+
+Lots of parens mixed with familiar and unfamiliar words, no obvious structure, etc.  Whiskey,  Tango, and Foxtrot already?
 
 In reality, what is going on is actually quite a bit simpler than what you might be using every day, but things do work differently, and need to be thought about differently.  And this thinking differently is where the benefit seems to lie.
 
@@ -21,7 +25,7 @@ There are three very important things to keep in mind when you are trying to get
 
 The stuff you build in your text editor is just that - **text**.  That text is then processed by an entity known as the **reader**, which (barring errors) will transform it into **data**.
 
-It does this be employing a certain lexigraphical rules to the incoming text which turns certain sequences of characters into entities that are (historically) called **atoms** (indivisible units).
+It does this be employing a certain lexigraphical rules to the incoming text which turns certain sequences of characters into entities that are (historically) called **atoms** (once considered to be indivisible units).
 
 In Clojure, these are examples of things that  become atoms when the reader encounters them:
 
@@ -48,7 +52,7 @@ This should all feel pretty natural to anybody that has used any programming lan
    
    - Keywords are likely a new concept as well.  These are human-readable strings that get "interned" into machine-friendly values.
    
-   - character constants, the '\\' .vs. single  quote "'".  In Lisps, the single-quote has an entirely different role.
+   - character constants, the '\\' .vs. single  quote "'".  In Lisps, the single-quote has an entirely different role (it ends up turning into the (quote) special form which will only serve to confuse at this point).
    
 ### Values and Evaluation
 
@@ -69,8 +73,11 @@ Containers compose recursively because they contain **values**, which include **
 
 ```
 (1 2 3)          ; a list
+
 (1 (2 3 4) 5)    ; a nested list
+
 (1 {:name "fred" :age 42} (4 (5 6))) ; even nuttier
+
 (sing "song") ; list of a symbol and a string
 
 ``` 
@@ -78,9 +85,9 @@ Containers compose recursively because they contain **values**, which include **
 ### Forms are the Code
 A list is clearly **data**.  But a list can also be **code** if it structured in such a way which allows it to be **evaluated**.  Lists of this sort are called **forms**, and this is the stuff we use to build our **code**.  So **code** is just **data** that can be **evaluated**.
 
-so this list (a symbol, integer, integer), which also happens to be a tiny program.
+so this is a list (consisting of a symbol, integer, integer), which also happens to be a tiny program.
 
-```Clojure
+```
 (+ 10 20)
 ```
 
@@ -89,25 +96,30 @@ We can experiment directly with building these 'tiny programs' and seeing the ou
 ```Cloujure
 user> 10          ;; evaluate a simple atom
 10
+
 user> +           ;; the value of symbol '+' is the function '+'
 #function[clojure.core/+]
-user> (+ 10 20)   ;; evaluate a form
+
+user> (+ 10 20)   ;; evaluate a form (call '+' with two arguments)
 30
-user> (* 5 (+ 10 20))  ;; and we can nest these...
+
+user> (* 5 (+ 10 20))  ;; and of course we can nest these...
 150
 
 ```
 And now we are starting to see the **code**, which consists of a number of nested **forms** that can be **evaluated** to produce **values**.
 
-It's really that simple.  You start with a library of functions and special forms, use these to compose more functions an forms, which you eventually use and compose to implement whatever program you set out to build.
+If you understand how the internals of a typical compiler might work, you probably recognize that what we have effectively specified the Abstract Syntax Tree (AST) of our program using nothing except for data.
 
-You are in effect building upon and continuing a bootstrap process leading from general (the built in primatives) to the specific (your libraries and programs).
+It's really that simple.  You start with a library of functions and special forms, use these to compose more functions and forms, which you eventually use and compose to implement whatever program you set out to build.
 
-Many Lisps have been implemented starting with only a very minimal kernel and bootstrapping (using Lisp) into full-blown implementation.
+You are in effect building upon and continuing a bootstrap process beginning from general tools (the built in primatives) to the specific ones (your libraries and programs).
+
+Many Lisps have been implemented starting with only a very minimal kernel (maybe a dozen forms) and bootstrapping into full-blown implementation.
 
 Clojure itself does a considerable amount of this type of bootstrapping to implement its own core library, so a great deal of Clojure is implemented in Clojure itself.  There is a formidable Java kernel to be sure, but there is also a lot of Clojure involved in the implementation.
 
-So there is no division of "us .vs. them" when it comes to what you can build this way.  Are you extending the language, or writing code?  Is there really any difference?
+So there is no division of "us .vs. them" when it comes to what you can build this way.  Are you extending the language, or writing your program  Is there really any difference?  Did you ever want/need there to be?
 
 ### Namespaces
 
@@ -133,11 +145,11 @@ Variables are created with `def`
 
 These get defined in the namespace of the file they are defined in.
 
-Note that these are not the customary "bash in place" variables you might be used to.  We are simply **binding** a **symbol** to a **value** here.
+Note that these are not the customary "bash in place" variables you might be used to.  We are simply **binding** a **symbol** to a **value** here, and making that available in the namespace we are working in.
 
 
 ### Functions
-Functions - those formerly mystical **values** that can be **evaluated** to produce **values** - where do they come from?
+Functions - those formerly mystical **values** that can be **evaluated** to produce **values** from other **values** - where do they come from?
 
 Why, there is a form to create them, of course.
 
@@ -199,7 +211,7 @@ Wanting to write a program, but can't get any traction?
 
 Been there.  There is a lot of stuff, and it is well organized if you know what you are looking for, but there is seemingly no place to get that first bite, and get started - even if you've been writing imperative code for decades.
 
-So this section is going to try to be a whirlwind tour of where you might find (or not find) some of the stuff you might be looking for.
+So this section is going to try to be a whirlwind tour of where you might find (or not find) some of the stuff you might be looking for to get started, some of which might be ellusive.
 
 #### printing things
 
@@ -231,11 +243,11 @@ the (let...) form is useful for this
 (let [x 100
       y (+ x 10)
       z (* x y)]
-      z) ;; the let-form returns value of 'z'
+      (+ z 20) ;; the let-form returns value of 'z'
 ```
 
 #### where are all the operators?
-they are all functions.  All the arithmetic, all the logicals, all the bit fiddling - functions.
+They are all functions.  This is nice, because now all of these operations get plugged into any place a function can.  All the arithmetic, all the logicals, all the bit fiddling are functions.  The ones you make and the ones that are part of the language work exactly the same way.  Simple.  Consistent.
 
 ```Clojure 
 ;; the c-way : if(a > b && b < 100) return 10; else return 20;
@@ -250,7 +262,7 @@ they are all functions.  All the arithmetic, all the logicals, all the bit fiddl
 
 They went lots of places.
 
-First there are a lot of functions that work on and generate sequences.
+First there are a lot of functions that work on and generate sequences, which do the sorts of things that loops often do, only in a much cleaner way.
 
 ```Clojure
 user> (range 10)
@@ -261,9 +273,9 @@ user> (reverse (range 10))
 (9 8 7 6 5 4 3 2 1 0)
 ```
 
-Clojure tends to view loops as applying a function to a container to get another container.
+Clojure tends to view loops as applying a function to a container to get a value which might also be a container. 
 
-There are certain types of loops that happen a lot, so there are built-in forms to implement these.
+There are certain types of loops that happen a lot, so there are built-in forms to implement these.  To use these, you simply bring the part is different to the party in the form of a function.
 
 **map** applies a function to every element in a container, producing a new container containing the result applied to each element:
 
@@ -272,7 +284,7 @@ user> (map even? (range 10))
 (true false true false true false true false true false)
 ```
 
-**filter** takes a function, and a container, and yields a new container which only contains elements for which the function returns a truthy result (usually called predicates).
+**filter** takes a function, and a container, and yields a new container which only contains elements for which the function returns a truthy result.  Functions like that are 'predicates' and often end with '?'.
 
 ```Clojure
 user> (filter even? (range 10))
@@ -280,7 +292,7 @@ user> (filter even? (range 10))
 ```
 
 **reduce** 
-Tricky to explain, but really powerful.  It amounts to starting with an accumulator value which is either the first element, or something you specify.  The container is walked and a two argument function is called (fn [a v] ... ) for every v, and at each step the accumulator is replaced by the value of the function, and the final value is returned.
+Tricky to explain, but really powerful.  It amounts to starting with an accumulator value which is either the first element, or something you specify.  The container is walked and a two argument function is called (fn [a v] ... ) for every value and the accumulator thus far.  When done, the final value of the accumulator is the result
 
 The customary example is something like this:
 
@@ -291,13 +303,11 @@ user> (reduce + [1 2 3 4])
 ```
 but that hardly does it justice.  If you have some loop in mind that doesn't fit one of **map**, **reduce** or **filter**, then perhaps you haven't quite grokked the possibilities availed by **reduce**.
 
-These are common loop constructs that get re-use through the different behavior of the function applied, so instead of writing out these loops, you just provide the behavior, not the actual loop body.
+If none of those exactly fit the need, then there is yet another option - replace your loop with a recursive function call.  Which is the usual prescription.
 
-If none of those exactly fit, then there is yet another option - replace your loop with a recusive function call.  Which is the usual prescription.
+But we all know that recursion gets expensive - eats a lot of stack space and what-not.  It is always an option, but sometimes resources are a concern.
 
-But we all know that recursion gets expensive - eats a lot of stack space and whatnot.
-
-This is mitgated by something called tail-call recursion, it is an optimization which recognizes that recursion from the tail of a function can be done without actually having to do the recursion, because there is really no need to preserve the call context to "come back to".
+This can be often mitigated by something called tail-call recursion, which is an optimization which recognizes that recursion from the tail of a function can be done without actually having to do the recursion, because there is really no need to preserve the call context to "come back to".
 
 Some languages are able to do this implicity, Clojure does it explicity through the **recur** form which can be applied both to function calls and **loop** forms.
 
@@ -306,9 +316,20 @@ by example:
 ```Clojure
 
 (defn sum-through [v]
+  "sum of ints in a closed-range [0 v]
+  
+  ;; we start by binding 0 to 'i' and 0 to 'r'
+  ;; 'i' is the 'index' 'r' is the 'result'
   (loop [i 0 r 0]
+  
+    ;; see if 'i' is <= 'v'
     (if (<= i v)
+    
+      ;; if it is, why then we tail-recurse back into the loop with
+      ;; new bindings, 'i' becomes '(inc i)', 'r' becomes '(+ r i)'
       (recur (inc i) (+ r i))
+      
+      ;; else, we simply yield the answer, which is the value of 'r'
       r)))
 
 
@@ -317,29 +338,30 @@ user> (time (sum-through 15000000))
 112500007500000
 ```
 
-yeah, that didn't happen on the stack.
+yeah, that certainly didn't happen on the stack.
 
 
+#### What about goto?
+It has obviously been replaced by clearly superior and much more technically advanced (come-from) form which is prevalent in the functional world.  Very funny.
 
+#### I wanna make a class that ...
+Um, no you don't.  This is likely an impulse left over from your OOP adventures.
 
+A class complects functions and data (methods), generally implies that you+ want to hide some internal state, or you think the data involved requires custom code which ruins it in some unique way.
 
+If you are trying to "protect" some data, there is no need.  It is immutable and nobody can reach in and change it on you.
 
+You can likely build a "data-structure" using just the Clojure collection types: **lists**, **vectors**, **maps** and **sets**.  And then anyone familiar with how these work is ready to use your stuff, and all the tools in the toobox already work on/with them.
 
+If you are looking to build "records" (aka fixed structures) **defrecord** can do that for you, and you still end up with things that work like maps.
 
+If you are looking for polymorphism, then you want to explore **defmulti**, **defmethod**, **defprotocol**, **reify**, and so forth.
 
+#### Gener
 
+#### Go forth and experiment
 
-
-
-
-
-
-
-
-
-
-
-
+That is really the best way to learn anyway, and this is pretty easy to do in Clojure, using the REPL (next section).
 
 
 
